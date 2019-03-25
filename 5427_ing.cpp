@@ -10,7 +10,7 @@ queue<int> sang_h;
 queue<int> fire_w;
 queue<int> fire_h;
 
-int hei, wid, s_w, s_h, f_w, f_h, visit[MAX][MAX];
+int hei, wid, s_w, s_h, f_w, f_h;
 int f_map[MAX][MAX], time[MAX][MAX];
 
 void clear(std::queue<int> &q) {
@@ -22,8 +22,7 @@ int initialize() {
 	for (int x = 0; x < hei; x++) {
 		for (int y = 0; y < wid; y++) {
 			f_map[x][y] = MAX;
-			visit[x][y] = 0;
-			time[x][y] = 0;
+			time[x][y] = MAX;
 		}
 	}
 	return 0;
@@ -64,8 +63,7 @@ int fire_map() {
 int BFS()
 {
 	sang_w.push(s_w);	sang_h.push(s_h);
-	time[s_h][s_w]++;
-	visit[s_h][s_w] = 1;
+	time[s_h][s_w] = 1;
 
 	while (!sang_w.empty()) {
 		s_w = sang_w.front();	sang_w.pop();		s_h = sang_h.front();	sang_h.pop();
@@ -78,25 +76,21 @@ int BFS()
 
 		if (map[s_h][s_w] == '*') {}
 		else {
-			if ((map[s_h - 1][s_w] == '.') && (s_h - 1 >= 0) && (visit[s_h - 1][s_w] == 0) && (f_map[s_h - 1][s_w] > time[s_h][s_w])) {
+			if ((map[s_h - 1][s_w] == '.') && (s_h - 1 >= 0) && (time[s_h - 1][s_w] > time[s_h][s_w]) && (f_map[s_h - 1][s_w] > time[s_h][s_w])) {
 				sang_h.push(s_h - 1);	sang_w.push(s_w);
 				time[s_h - 1][s_w] = time[s_h][s_w] + 1;
-				visit[s_h - 1][s_w] = 1;
 			}
-			if ((map[s_h][s_w - 1] == '.') && (s_w - 1 >= 0) && (visit[s_h][s_w - 1] == 0) && (f_map[s_h][s_w - 1] > time[s_h][s_w])) {
+			if ((map[s_h][s_w - 1] == '.') && (s_w - 1 >= 0) && (time[s_h][s_w - 1] > time[s_h][s_w]) && (f_map[s_h][s_w - 1] > time[s_h][s_w])) {
 				sang_h.push(s_h);		sang_w.push(s_w - 1);
 				time[s_h][s_w - 1] = time[s_h][s_w] + 1;
-				visit[s_h][s_w - 1] = 1;
 			}
-			if ((map[s_h + 1][s_w] == '.') && (s_h + 1 < hei) && (visit[s_h + 1][s_w] == 0) && (f_map[s_h + 1][s_w] > time[s_h][s_w])) {
+			if ((map[s_h + 1][s_w] == '.') && (s_h + 1 < hei) && (time[s_h + 1][s_w] > time[s_h][s_w]) && (f_map[s_h + 1][s_w] > time[s_h][s_w])) {
 				sang_h.push(s_h + 1);	sang_w.push(s_w);
 				time[s_h + 1][s_w] = time[s_h][s_w] + 1;
-				visit[s_h + 1][s_w] = 1;
 			}
-			if ((map[s_h][s_w + 1] == '.') && (s_w + 1 < wid) && (visit[s_h][s_w + 1] == 0) && (f_map[s_h][s_w + 1] > time[s_h][s_w])) {
+			if ((map[s_h][s_w + 1] == '.') && (s_w + 1 < wid) && (time[s_h][s_w + 1] > time[s_h][s_w]) && (f_map[s_h][s_w + 1] > time[s_h][s_w])) {
 				sang_h.push(s_h);		sang_w.push(s_w + 1);
 				time[s_h][s_w + 1] = time[s_h][s_w] + 1;
-				visit[s_h][s_w + 1] = 1;
 			}
 		}
 	}
@@ -125,7 +119,7 @@ int main()
 				if (map[i][j] == '*') {
 					fire_h.push(i);
 					fire_w.push(j);
-					f_map[i][j] = 1;
+					f_map[i][j] = 0;
 				}
 				else if (map[i][j] == '@') {
 					s_h = i;
