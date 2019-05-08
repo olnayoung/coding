@@ -47,6 +47,11 @@ int air() {
 	return 0;
 }
 
+int filter() {
+
+	return 0;
+}
+
 int main() {
 
 	scanf("%d %d %d", &H, &W, &T);
@@ -65,6 +70,7 @@ int main() {
 
 	for (int t = 0; t < T; t++) {
 		air();
+		filter();
 	}
 
 	printf("\n");
