@@ -13,9 +13,7 @@ int air() {
 	for (int y = 0; y < H; y++) {
 		for (int x = 0; x < W; x++) {
 			if (map[y][x] > 0) {
-				if (map[y][x] == 1) {
-					add[y][x] += 1;
-				}
+				if (map[y][x] == 1) add[y][x] += 1;
 				else {
 					temp = map[y][x] / 5;
 					int count = 0;
