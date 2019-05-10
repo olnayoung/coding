@@ -21,7 +21,7 @@ int find_way_r() {
 		check = 0;
 
 		for (int x = 0; x < N-1; x++) {
-			if ( ((map[y][x] - map[y][x+1]) > 1) && ((map[y][x+1] - map[y][x]) < -1) ) {
+			if ( ((map[y][x] - map[y][x+1]) > 1) || ((map[y][x+1] - map[y][x]) > 1) ) {
 				check = 1;
 				break;
 			}
@@ -63,7 +63,7 @@ int find_way_c() {
 		check = 0;
 
 		for (int y = 0; y < N - 1; y++) {
-			if (((map[y+1][x] - map[y][x]) > 1) && ((map[y+1][x] - map[y][x]) < -1)) {
+			if (((map[y+1][x] - map[y][x]) > 1) && ((map[y+1][x] - map[y][x]) > 1)) {
 				check = 1;
 				break;
 			}
