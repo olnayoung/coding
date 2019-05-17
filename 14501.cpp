@@ -43,7 +43,7 @@ int main() {
 	}
 
 	for (int x = 0; x < N; x++) {
-		if (x + map[x][0] < N) {
+		if (x + map[x][0] <= N) {
 			bye(x, 0);
 		}
 	}
