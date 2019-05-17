@@ -25,11 +25,10 @@ int bye(int start, int num) {
 	pos[num] = start;
 	max = (max > calcul_p(num)) ? max : calcul_p(num);
 
-	for (int x = start; x < N; x++) {
+	for (int x = start+1; x < N; x++) {
 		if (start + map[start][0] > x) continue;
-		if (x + map[x][0] < N) {
-			pos[num + 1] = x;
-			bye(x+1, num+2);
+		if (x + map[x][0] <= N) {
+			bye(x, num+1);
 		}
 	}
 
