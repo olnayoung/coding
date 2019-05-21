@@ -18,16 +18,6 @@ int print() {
 	return 0;
 }
 
-int clear() {
-	for (int y = 0; y < hei; y++) {
-		for (int x = 0; x < wid; x++) {
-			visit[y][x] = 0;
-		}
-	}
-
-	return 0;
-}
-
 int count() {
 	num = 0;
 	for (int y = 0; y < hei; y++) {
@@ -42,7 +32,7 @@ int count() {
 }
 
 int up(int j, int i) {
-	for (int y = j-1; y > -1; y--) {
+	for (int y = j - 1; y > -1; y--) {
 		if (map[y][i] == 6) break;
 		visit[y][i] += 1;
 	}
@@ -69,7 +59,7 @@ int left(int j, int i) {
 }
 
 int right(int j, int i) {
-	for (int x = i + 1; x < hei; x++) {
+	for (int x = i + 1; x < wid; x++) {
 		if (map[j][x] == 6) break;
 		visit[j][x] += 1;
 	}
@@ -105,7 +95,7 @@ int left_re(int j, int i) {
 }
 
 int right_re(int j, int i) {
-	for (int x = i + 1; x < hei; x++) {
+	for (int x = i + 1; x < wid; x++) {
 		if (map[j][x] == 6) break;
 		visit[j][x] -= 1;
 	}
@@ -116,7 +106,6 @@ int right_re(int j, int i) {
 int cctv(int repeat) {
 	if (repeat == num_of_cctv) {
 		count();
-		print();
 		return 0;
 	}
 
@@ -135,6 +124,7 @@ int cctv(int repeat) {
 
 		right(h[repeat], w[repeat]);
 		cctv(repeat + 1);
+		right_re(h[repeat], w[repeat]);
 	}
 	else if (n[repeat] == 2) {
 		up(h[repeat], w[repeat]);
@@ -146,6 +136,8 @@ int cctv(int repeat) {
 		left(h[repeat], w[repeat]);
 		right(h[repeat], w[repeat]);
 		cctv(repeat + 1);
+		left_re(h[repeat], w[repeat]);
+		right_re(h[repeat], w[repeat]);
 	}
 	else if (n[repeat] == 3) {
 		up(h[repeat], w[repeat]);
@@ -169,6 +161,41 @@ int cctv(int repeat) {
 		up(h[repeat], w[repeat]);
 		left(h[repeat], w[repeat]);
 		cctv(repeat + 1);
+		up_re(h[repeat], w[repeat]);
+		left_re(h[repeat], w[repeat]);
+	}
+	else if (n[repeat] == 4) {
+		up(h[repeat], w[repeat]);
+		right(h[repeat], w[repeat]);
+		left(h[repeat], w[repeat]);
+		cctv(repeat + 1);
+		up_re(h[repeat], w[repeat]);
+		right_re(h[repeat], w[repeat]);
+		left_re(h[repeat], w[repeat]);
+
+		up(h[repeat], w[repeat]);
+		down(h[repeat], w[repeat]);
+		left(h[repeat], w[repeat]);
+		cctv(repeat + 1);
+		up_re(h[repeat], w[repeat]);
+		down_re(h[repeat], w[repeat]);
+		left_re(h[repeat], w[repeat]);
+
+		up(h[repeat], w[repeat]);
+		down(h[repeat], w[repeat]);
+		right(h[repeat], w[repeat]);
+		cctv(repeat + 1);
+		up_re(h[repeat], w[repeat]);
+		down_re(h[repeat], w[repeat]);
+		right_re(h[repeat], w[repeat]);
+
+		down(h[repeat], w[repeat]);
+		right(h[repeat], w[repeat]);
+		left(h[repeat], w[repeat]);
+		cctv(repeat + 1);
+		down_re(h[repeat], w[repeat]);
+		right_re(h[repeat], w[repeat]);
+		left_re(h[repeat], w[repeat]);
 	}
 	else {
 		up(h[repeat], w[repeat]);
@@ -176,6 +203,10 @@ int cctv(int repeat) {
 		right(h[repeat], w[repeat]);
 		left(h[repeat], w[repeat]);
 		cctv(repeat + 1);
+		up_re(h[repeat], w[repeat]);
+		down_re(h[repeat], w[repeat]);
+		right_re(h[repeat], w[repeat]);
+		left_re(h[repeat], w[repeat]);
 	}
 
 	return 0;
