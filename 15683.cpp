@@ -6,18 +6,6 @@ int visit[8][8];
 int num, min = 64, num_of_cctv;
 int h[8], w[8], n[8];
 
-int print() {
-	printf("\n\n");
-	for (int y = 0; y < hei; y++) {
-		for (int x = 0; x < wid; x++) {
-			printf("%d ", visit[y][x]);
-		}
-		printf("\n");
-	}
-
-	return 0;
-}
-
 int count() {
 	num = 0;
 	for (int y = 0; y < hei; y++) {
