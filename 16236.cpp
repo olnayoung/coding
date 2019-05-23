@@ -6,27 +6,16 @@ int map[20][20];
 int visit[20][20];
 int que[3][MAX], pos[3][MAX];
 int start, finish, pos_finish, time, dist[20][20];
-int dx[4] = { 0, -1, 1, 0 };
-int dy[4] = { -1, 0, 0, 1 };
+int dx[4] = { 0, -1, 0, 1 };
+int dy[4] = { -1, 0, 1, 0 };
 
 int eat();
-
-int print() {
-	printf("\n\n");
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < N; x++) {
-			printf("%d ", dist[y][x]);
-		}
-		printf("\n");
-	}
-	return 0;
-}
 
 int clear() {
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
 			visit[y][x] = 0;
-			dist[y][x] = 999;
+			dist[y][x] = MAX;
 		}
 	}
 	return 0;
