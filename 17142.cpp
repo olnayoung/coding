@@ -53,20 +53,30 @@ int time() {
 		for (int t = 0; t < 4; t++) {
 			new_y = vir_y + dy[t];	new_x = vir_x + dx[t];
 
-			if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N) && (visit[new_y][new_x] == 0) && (map[new_y][new_x] == 0)) {
-				visit[new_y][new_x] = visit[vir_y][vir_x] + 1;
-				que_y[finish] = new_y;	que_x[finish] = new_x;
-				finish++;
-				count_blank++;
+			if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N) && (visit[new_y][new_x] == 0)) {
+				if (map[new_y][new_x] == 0) {
+					visit[new_y][new_x] = visit[vir_y][vir_x] + 1;
+					que_y[finish] = new_y;	que_x[finish] = new_x;
+					finish++;
+					count_blank++;
 
-				max = (visit[new_y][new_x] > max) ? visit[new_y][new_x] : max;
+					max = (visit[new_y][new_x] > max) ? visit[new_y][new_x] : max;
+
+					if (count_blank == num_blanks) {
+						min = (min < max) ? min : max;
+						return 0;
+					}
+				}
+				else if (map[new_y][new_x] == 2) {
+					visit[new_y][new_x] = visit[vir_y][vir_x] + 1;
+					que_y[finish] = new_y;	que_x[finish] = new_x;
+					finish++;
+
+					max = (visit[new_y][new_x] > max) ? visit[new_y][new_x] : max;
+				}
 			}
 		}
 
-	}
-  
-	if (count_blank == num_blanks) {
-		min = (min < max) ? min : max;
 	}
 
 	return 0;
