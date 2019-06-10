@@ -1,7 +1,7 @@
 #include <cstdio>
 #define max 1000000
 
-int N, M, min = 11;
+int N, M, min = 11, temp;
 char map[10][10];
 int dx[4] = { 1, 0, -1, 0 };
 int dy[4] = { 0, 1, 0, -1 };
@@ -18,6 +18,8 @@ int print() {
 	}
 	return 0;
 }
+
+int roll(int num);
 
 int move_back(int num) {
 	map[red_y][red_x] = '.';
@@ -57,10 +59,7 @@ int roll_red(int num, int way) {
 	while (1) {
 		if (map[red_y + ddy][red_x + ddx] == '.') move_red(way);
 		else if (map[red_y + ddy][red_x + ddx] == '#' || map[red_y + ddy][red_x + ddx] == 'B')	break;
-		else if (map[red_y + ddy][red_x + ddx] == 'O') {
-			min = (num > min) ? min : num;
-			return 1;
-		}
+		else if (map[red_y + ddy][red_x + ddx] == 'O')	return 1;
 	}
 
 	return 0;
@@ -78,108 +77,89 @@ int roll_blue(int num, int way) {
 	return 0;
 }
 
+int red_first(int num, int way) {
+	int check;
+
+	past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
+	temp = roll_red(num, way);	if (temp == 1)	check = 1;
+	temp = roll_blue(num, way);	if (temp == 1)	return 1;
+
+	if (check == 1) {
+		min = (num > min) ? min : num;
+		return 1;
+	}
+	roll(num + 1);
+	move_back(num);
+
+	return 0;
+}
+
+int blue_first(int num, int way) {
+	past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
+	temp = roll_blue(num, way);	if (temp == 1)	return 1;
+	temp = roll_red(num, way); {
+		if (temp == 1) {
+			min = (num > min) ? min : num;
+			return 1;
+		}
+	}
+	roll(num + 1);
+	move_back(num);
+
+	return 0;
+}
 
 int roll(int num) {
 	if (num == 10) {
 		return 0;
 	}
 
-	int temp;
-
 	if (red_y == blue_y) { // ->
 		if (red_x > blue_x) {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_red(num, 0);	if (temp == 1)	return 0;
-			temp = roll_blue(num, 0);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = red_first(num, 0);	if (temp == 1)	return 0;
 		}
 		else {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_blue(num, 0);	if (temp == 1)	return 0;
-			temp = roll_red(num, 0);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = blue_first(num, 0);	if (temp == 1)	return 0;
 		}
 	}
 	else {
-		past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-		temp = roll_blue(num, 0);	if (temp == 1)	return 0;
-		temp = roll_red(num, 0);	if (temp == 1)	return 0;
-		roll(num + 1);
-		move_back(num);
+		temp = blue_first(num, 0);	if (temp == 1)	return 0;
 	}
 
 	if (red_x == blue_x) { // down
 		if (red_y > blue_y) {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_red(num, 1);	if (temp == 1)	return 0;
-			temp = roll_blue(num, 1);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = red_first(num, 1);	if (temp == 1)	return 0;
 		}
 		else {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_blue(num, 1);	if (temp == 1)	return 0;
-			temp = roll_red(num, 1);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = blue_first(num, 1);	if (temp == 1)	return 0;
 		}
 	}
 	else {
-		past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-		temp = roll_blue(num, 1);	if (temp == 1)	return 0;
-		temp = roll_red(num, 1);	if (temp == 1)	return 0;
-		roll(num + 1);
-		move_back(num);
+		temp = blue_first(num, 1);	if (temp == 1)	return 0;
 	}
 
 	if (red_y == blue_y) { // <-
 		if (red_x < blue_x) {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_red(num, 2);	if (temp == 1)	return 0;
-			temp = roll_blue(num, 2);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = red_first(num, 2);	if (temp == 1)	return 0;
 		}
 		else {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_blue(num, 2);	if (temp == 1)	return 0;
-			temp = roll_red(num, 2);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = blue_first(num, 2);	if (temp == 1)	return 0;
 		}
 	}
 	else {
-		past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-		temp = roll_blue(num, 2);	if (temp == 1)	return 0;
-		temp = roll_red(num, 2);	if (temp == 1)	return 0;
-		roll(num + 1);
-		move_back(num);
+		temp = blue_first(num, 2);	if (temp == 1)	return 0;
 	}
 
 	if (red_x == blue_x) { // up
 		if (red_y < blue_y) {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_red(num, 3);	if (temp == 1)	return 0;
-			temp = roll_blue(num, 3);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = red_first(num, 3);	if (temp == 1)	return 0;
 		}
 		else {
-			past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-			temp = roll_blue(num, 3);	if (temp == 1)	return 0;
-			temp = roll_red(num, 3);	if (temp == 1)	return 0;
-			roll(num + 1);
-			move_back(num);
+			temp = blue_first(num, 3);	if (temp == 1)	return 0;
 		}
 	}
 	else {
-		past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-		temp = roll_blue(num, 3);	if (temp == 1)	return 0;
-		temp = roll_red(num, 3);	if (temp == 1)	return 0;
-		roll(num + 1);
-		move_back(num);
+		temp = blue_first(num, 3);	if (temp == 1)	return 0;
 	}
 
 	return 0;
