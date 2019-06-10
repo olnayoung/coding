@@ -1,23 +1,11 @@
 #include <cstdio>
-#define max 1000000
 
-int N, M, min = 11, temp, if_O[10];
+int N, M, min = 11, temp;
 char map[10][10];
 int dx[4] = { 1, 0, -1, 0 };
 int dy[4] = { 0, 1, 0, -1 };
 int red_y, red_x, blue_y, blue_x;
 int past_red_y[10], past_red_x[10], past_blue_y[10], past_blue_x[10];
-
-int print() {
-	printf("\n\n");
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < M; x++) {
-			printf("%c", map[y][x]);
-		}
-		printf("\n");
-	}
-	return 0;
-}
 
 int roll(int num);
 
@@ -83,12 +71,16 @@ int red_first(int num, int way) {
 
 	past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
 	temp = roll_red(num, way);	if (temp == 1)	check = 1;
-	temp = roll_blue(num, way);	if (temp == 1)	return 1;
+	temp = roll_blue(num, way);	
+	if (temp == 1) {
+		move_back(num);
+		return 0;
+	}
 
 	if (check == 1) {
 		min = (num > min) ? min : num;
-		print();
-		return 1;
+		move_back(num);
+		return 0;
 	}
 	roll(num + 1);
 	move_back(num);
@@ -98,11 +90,16 @@ int red_first(int num, int way) {
 
 int blue_first(int num, int way) {
 	past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
-	temp = roll_blue(num, way);	if (temp == 1)	return 1;
+	temp = roll_blue(num, way);	
+	if (temp == 1) {
+		move_back(num);
+		return 0;
+	}
 	temp = roll_red(num, way); {
 		if (temp == 1) {
 			min = (num > min) ? min : num;
-			return 1;
+			move_back(num);
+			return 0;
 		}
 	}
 	roll(num + 1);
@@ -115,52 +112,28 @@ int roll(int num) {
 	if (num == 10)	return 0;
 
 	if (red_y == blue_y) { // ->
-		if (red_x > blue_x) {
-			temp = red_first(num, 0);	if (temp == 1)	return 0;
-		}
-		else {
-			temp = blue_first(num, 0);	if (temp == 1)	return 0;
-		}
+		if (red_x > blue_x) red_first(num, 0);
+		else blue_first(num, 0);
 	}
-	else {
-		temp = blue_first(num, 0);	if (temp == 1)	return 0;
-	}
+	else blue_first(num, 0);
 
 	if (red_x == blue_x) { // down
-		if (red_y > blue_y) {
-			temp = red_first(num, 1);	if (temp == 1)	return 0;
-		}
-		else {
-			temp = blue_first(num, 1);	if (temp == 1)	return 0;
-		}
+		if (red_y > blue_y) red_first(num, 1);
+		else blue_first(num, 1);
 	}
-	else {
-		temp = blue_first(num, 1);	if (temp == 1)	return 0;
-	}
+	else blue_first(num, 1);
 
 	if (red_y == blue_y) { // <-
-		if (red_x < blue_x) {
-			temp = red_first(num, 2);	if (temp == 1)	return 0;
-		}
-		else {
-			temp = blue_first(num, 2);	if (temp == 1)	return 0;
-		}
+		if (red_x < blue_x)	red_first(num, 2);
+		else blue_first(num, 2);
 	}
-	else {
-		temp = blue_first(num, 2);	if (temp == 1)	return 0;
-	}
+	else blue_first(num, 2);
 
 	if (red_x == blue_x) { // up
-		if (red_y < blue_y) {
-			temp = red_first(num, 3);	if (temp == 1)	return 0;
-		}
-		else {
-			temp = blue_first(num, 3);	if (temp == 1)	return 0;
-		}
+		if (red_y < blue_y) red_first(num, 3);
+		else blue_first(num, 3);
 	}
-	else {
-		temp = blue_first(num, 3);	if (temp == 1)	return 0;
-	}
+	else blue_first(num, 3);
 
 	return 0;
 }
@@ -170,9 +143,9 @@ int main() {
 
 	char temp;
 	for (int y = 0; y < N; y++) {
-		scanf("%1c", &temp);
+		getchar();
 		for (int x = 0; x < M; x++) {
-			scanf("%1c", &map[y][x]);
+			scanf("%c", &map[y][x]);
 			if (map[y][x] == 'R') {
 				red_y = y;	red_x = x;
 			}
@@ -185,7 +158,7 @@ int main() {
 	roll(0);
 
 	if (min == 11)	printf("-1");
-	else printf("%d", min+1);
+	else printf("%d", min + 1);
 
 	return 0;
 }
