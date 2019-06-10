@@ -1,7 +1,7 @@
 #include <cstdio>
 #define max 1000000
 
-int N, M, min = 11, temp;
+int N, M, min = 11, temp, if_O[10];
 char map[10][10];
 int dx[4] = { 1, 0, -1, 0 };
 int dy[4] = { 0, 1, 0, -1 };
@@ -59,9 +59,11 @@ int roll_red(int num, int way) {
 	while (1) {
 		if (map[red_y + ddy][red_x + ddx] == '.') move_red(way);
 		else if (map[red_y + ddy][red_x + ddx] == '#' || map[red_y + ddy][red_x + ddx] == 'B')	break;
-		else if (map[red_y + ddy][red_x + ddx] == 'O')	return 1;
+		else if (map[red_y + ddy][red_x + ddx] == 'O')	{
+			map[red_y][red_x] = '.';
+			return 1;
+		}
 	}
-
 	return 0;
 }
 
@@ -73,12 +75,11 @@ int roll_blue(int num, int way) {
 		else if (map[blue_y + ddy][blue_x + ddx] == '#' || map[blue_y + ddy][blue_x + ddx] == 'R')	break;
 		else if (map[blue_y + ddy][blue_x + ddx] == 'O')	return 1;
 	}
-
 	return 0;
 }
 
 int red_first(int num, int way) {
-	int check;
+	int check = 0;
 
 	past_red_y[num] = red_y;	past_red_x[num] = red_x;	past_blue_y[num] = blue_y;	past_blue_x[num] = blue_x;
 	temp = roll_red(num, way);	if (temp == 1)	check = 1;
@@ -86,6 +87,7 @@ int red_first(int num, int way) {
 
 	if (check == 1) {
 		min = (num > min) ? min : num;
+		print();
 		return 1;
 	}
 	roll(num + 1);
@@ -110,9 +112,7 @@ int blue_first(int num, int way) {
 }
 
 int roll(int num) {
-	if (num == 10) {
-		return 0;
-	}
+	if (num == 10)	return 0;
 
 	if (red_y == blue_y) { // ->
 		if (red_x > blue_x) {
