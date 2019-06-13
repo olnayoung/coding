@@ -83,14 +83,13 @@ int order() {
 
 int spring() {
 	order(); 
-	int temp, num;
-	register int j;
+	int num;
 
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
 			num = 0;
 			dead = 0;
-			for (j = 0; j < tree_num[y][x]; j++) {
+			for (int j = 0; j < tree_num[y][x]; j++) {
 				if (map[y][x] >= tree_map[y][x][j]) {
 					map[y][x] -= tree_map[y][x][j];
 					tree_map[y][x][j]++;
@@ -98,10 +97,10 @@ int spring() {
 				else {
 					dead += (tree_map[y][x][j] / 2); // summer
 					tree_map[y][x][j] = 0;
-					num += 1;
+					num--;
 				}
 			}
-			tree_num[y][x] -= num;
+			tree_num[y][x] += num;
 			map[y][x] += dead;
 
 			changed[y][x] = 0; // clear
@@ -112,15 +111,14 @@ int spring() {
 
 int fall() {
 	int new_y, new_x;
-	register int j;
 
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
-			for (j = 0; j < tree_num[y][x]; j++) {
+			for (int j = 0; j < tree_num[y][x]; j++) {
 				if (tree_map[y][x][j] % 5 == 0) {
 					for (int t = 0; t < 8; t++) {
 						new_y = y + dy[t];	new_x = x + dx[t];
-						if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_y < N)) {
+						if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N)) {
 							tree_map[new_y][new_x][tree_num[new_y][new_x] + changed[new_y][new_x]] = 1;
 							changed[new_y][new_x]++;
 						}
