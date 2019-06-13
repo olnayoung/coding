@@ -1,15 +1,13 @@
 #include <cstdio>
-#define max 10000000
+#define max 1001
 
-int N, M, K, tree_num, dead_num, tree_end, dead_end; // num = 실제 갯수, end = 끝 array 번호
-int map[10][10], A[10][10];
-int tree[max][3], dead_tree[max][3];
-long long tree_y[max], tree_x[max], tree_age[max];
-long long dead_tree[max], dead_tree[max], dead_tree[max];
-int dx[8] = { 0, 0, 1, -1, 1, -1 , 1, -1};
+int N, M, K, tree_num[10][10], changed[10][10], dead_num[10][10], sum;
+int map[10][10], A[10][10], tree_map[10][10][max], dead_map[10][10][max];
+int dx[8] = { 0, 0, 1, -1, 1, -1, 1, -1 };
 int dy[8] = { 1, -1, 0, 0, 1, -1, -1, 1 };
 
 int print() {
+	printf("\n-------------map--------------\n");
 	printf("\n\n");
 	for (int n = 0; n < N; n++) {
 		for (int nn = 0; nn < N; nn++) {
@@ -17,7 +15,46 @@ int print() {
 		}
 		printf("\n");
 	}
+	printf("\n-------------TREE--------------\n");
 
+	printf("\n\n");
+	for (int n = 0; n < N; n++) {
+		for (int nn = 0; nn < N; nn++) {
+			printf("%d ", tree_num[n][nn]);
+		}
+		printf("\n");
+	}
+
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			if (tree_num[y][x] > 0) {
+				printf("y: %d, x: %d\n", y, x);
+				for (int t = 0; t < tree_num[y][x]; t++) {
+					printf("%d ", tree_map[y][x][t]);
+				}
+				printf("\n");
+			}
+		}
+	}
+
+	return 0;
+}
+
+int calcul() {
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			sum += tree_num[y][x];
+		}
+	}
+	return 0;
+}
+
+int clear() {
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			changed[y][x] = 0;
+		}
+	}
 	return 0;
 }
 
@@ -33,94 +70,103 @@ int init() {
 int order() {
 	int temp;
 
-	for (int a = 0; a < tree_end; a++) {
-		for (int b = 0; b < tree_end; b++) {
-			if (tree[b][2] > tree[b + 1][2]) {
-				temp = tree[b][2];	tree[b][2] = tree[b + 1][2];	tree[b + 1][2] = temp;
-				temp = tree[b][1];	tree[b][1] = tree[b + 1][1];	tree[b + 1][1] = temp;
-				temp = tree[b][0];	tree[b][0] = tree[b + 1][0];	tree[b + 1][0] = temp;
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			changed[y][x] = 0;
+
+			for (int j = 0; j < tree_num[y][x] - 1; j++) {
+				for (int i = 0; i < tree_num[y][x] - 1; i++) {
+					if (tree_map[y][x][i] > tree_map[y][x][i + 1]) {
+						temp = tree_map[y][x][i];
+						tree_map[y][x][i] = tree_map[y][x][i + 1];
+						tree_map[y][x][i + 1] = temp;
+					}
+				}
 			}
+
 		}
 	}
-
-	return 0;
-}
-
-int move_tree() {
-	int temp;
-	for (int a = 0; a < tree_end; a++) {
-		if (tree[a][2] == 0) {
-			temp = 0;
-			while (1) {
-				if (tree[a + temp + 1][2] != 0)	break;
-				temp++;
-			}
-			for (int b = a; b < tree_end; b++) {
-				tree[b][0] = tree[b + temp + 1][0];
-				tree[b][1] = tree[b + temp + 1][1];
-				tree[b][2] = tree[b + temp + 1][2];
-			}
-		}
-	}
-
-	tree[tree_num][0] = 0;	tree[tree_num][1] = 0;	tree[tree_num][2] = 0;
-
-	tree_end = tree_num;
 
 	return 0;
 }
 
 int spring() {
-	for (int i = 0; i < tree_end; i++) {
-		if (map[tree[i][0]][tree[i][1]] >= tree[i][2]) {
-			map[tree[i][0]][tree[i][1]] -= tree[i][2];
-			tree[i][2]++;
-		}
-		else {
-			tree_num--;
-			dead_tree[dead_num][0] = tree[i][0];
-			dead_tree[dead_num][1] = tree[i][1];
-			dead_tree[dead_num][2] = tree[i][2];
-			dead_num++;
-			tree[i][2] = 0;
+	order();
+	int temp, num = 0;
+	register int j, i;
+
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			num = 0;
+			for (j = 0; j < tree_num[y][x]; j++) {
+				if (map[y][x] >= tree_map[y][x][j]) {
+					map[y][x] -= tree_map[y][x][j];
+					tree_map[y][x][j]++;
+				}
+				else {
+					dead_map[y][x][dead_num[y][x]] = tree_map[y][x][j];
+					dead_num[y][x]++;
+					tree_map[y][x][j] = 0;
+					num -= 1;
+				}
+			}
+
+			for (j = 0; j < tree_num[y][x]; j++) {
+				if (tree_map[y][x][j] == 0) {
+					temp = 0;
+					while (1) {
+						if (tree_map[y][x][j + temp] != 0) break;
+						temp++;
+					}
+					for (i = j; i < tree_num[y][x] - temp; i++) {
+						tree_map[y][x][i] = tree_map[y][x][i + temp];
+					}
+				}
+			}
+			tree_num[y][x] += num;
 		}
 	}
-
 	return 0;
 }
 
 int summer() {
-	for (int i = 0; i < dead_num; i++) {
-		map[dead_tree[i][0]][dead_tree[i][1]] += (dead_tree[i][2] / 2);
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			for (int j = 0; j < dead_num[y][x]; j++) {
+				map[y][x] += (dead_map[y][x][j] / 2);
+			}
+		}
 	}
-
-	dead_num = 0;
 	return 0;
 }
 
 int fall() {
-	move_tree();
+	clear();
 
-	int new_y, new_x, temp_end = tree_end;
+	int new_y, new_x, num =  0;
+	register int j;
 
-	for (int i = 0; i < temp_end; i++) {
-		if (tree[i][2] % 5 == 0) {
-			for (int t = 0; t < 8; t++) {
-				new_y = tree[i][0] + dy[t];	new_x = tree[i][1] + dx[t];
-
-				if ((new_y < N) && (new_x < N) && (new_y > -1) && (new_x > -1)) {
-					tree[tree_end][0] = new_y;
-					tree[tree_end][1] = new_x;
-					tree[tree_end][2] = 1;
-					tree_end++;
-					tree_num++;
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			for (j = 0; j < tree_num[y][x]; j++) {
+				if (tree_map[y][x][j] % 5 == 0) {
+					for (int t = 0; t < 8; t++) {
+						new_y = y + dy[t];	new_x = x + dx[t];
+						if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_y < N)) {
+							tree_map[new_y][new_x][tree_num[new_y][new_x] + changed[new_y][new_x]] = 1;
+							changed[new_y][new_x]++;
+						}
+					}
 				}
 			}
 		}
 	}
 
-	order();
-	move_tree();
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			tree_num[y][x] += changed[y][x];
+		}
+	}
 
 	return 0;
 }
@@ -131,7 +177,6 @@ int winter() {
 			map[y][x] += A[y][x];
 		}
 	}
-
 	return 0;
 }
 
@@ -144,23 +189,29 @@ int main() {
 		}
 	}
 
+	int a, b, c;
 	for (int m = 0; m < M; m++) {
-		scanf("%d %d %d", &tree[m][1], &tree[m][0], &tree[m][2]);
-		tree[m][0]--;	 tree[m][1]--;
-		tree_num++;
-		tree_end++;
+		scanf("%d %d %d", &a, &b, &c);
+		tree_map[a - 1][b - 1][tree_num[a][b]] = c;
+		tree_num[a - 1][b - 1]++;
 	}
 
 	init();
 
 	for (int k = 0; k < K; k++) {
 		spring();
+		//print();
 		summer();
+		//print();
 		fall();
+		//print();
 		winter();
+		//print();
 	}
 
-	printf("%d", tree_num);
+	calcul();
+
+	printf("%d", sum);
 
 	return 0;
 }
