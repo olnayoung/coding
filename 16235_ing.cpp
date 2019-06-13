@@ -1,8 +1,8 @@
 #include <cstdio>
-#define max 1001
+#define max 999999
 
-int N, M, K, tree_num[10][10], changed[10][10], dead_num[10][10], sum;
-int map[10][10], A[10][10], tree_map[10][10][max], dead_map[10][10][max];
+int N, M, K, tree_num[10][10], changed[10][10], sum;
+int map[10][10], A[10][10], tree_map[10][10][max], dead;
 int dx[8] = { 0, 0, 1, -1, 1, -1, 1, -1 };
 int dy[8] = { 1, -1, 0, 0, 1, -1, -1, 1 };
 
@@ -49,19 +49,10 @@ int calcul() {
 	return 0;
 }
 
-int clear() {
+int init() {
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
-			changed[y][x] = 0;
-		}
-	}
-	return 0;
-}
-
-int init() {
-	for (int n = 0; n < N; n++) {
-		for (int nn = 0; nn < N; nn++) {
-			map[n][nn] = 5;
+			map[y][x] = 5;
 		}
 	}
 	return 0;
@@ -91,59 +82,36 @@ int order() {
 }
 
 int spring() {
-	order();
-	int temp, num = 0;
-	register int j, i;
+	order(); 
+	int temp, num;
+	register int j;
 
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
 			num = 0;
+			dead = 0;
 			for (j = 0; j < tree_num[y][x]; j++) {
 				if (map[y][x] >= tree_map[y][x][j]) {
 					map[y][x] -= tree_map[y][x][j];
 					tree_map[y][x][j]++;
 				}
 				else {
-					dead_map[y][x][dead_num[y][x]] = tree_map[y][x][j];
-					dead_num[y][x]++;
+					dead += (tree_map[y][x][j] / 2); // summer
 					tree_map[y][x][j] = 0;
-					num -= 1;
+					num += 1;
 				}
 			}
+			tree_num[y][x] -= num;
+			map[y][x] += dead;
 
-			for (j = 0; j < tree_num[y][x]; j++) {
-				if (tree_map[y][x][j] == 0) {
-					temp = 0;
-					while (1) {
-						if (tree_map[y][x][j + temp] != 0) break;
-						temp++;
-					}
-					for (i = j; i < tree_num[y][x] - temp; i++) {
-						tree_map[y][x][i] = tree_map[y][x][i + temp];
-					}
-				}
-			}
-			tree_num[y][x] += num;
-		}
-	}
-	return 0;
-}
-
-int summer() {
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < N; x++) {
-			for (int j = 0; j < dead_num[y][x]; j++) {
-				map[y][x] += (dead_map[y][x][j] / 2);
-			}
+			changed[y][x] = 0; // clear
 		}
 	}
 	return 0;
 }
 
 int fall() {
-	clear();
-
-	int new_y, new_x, num =  0;
+	int new_y, new_x;
 	register int j;
 
 	for (int y = 0; y < N; y++) {
@@ -200,8 +168,6 @@ int main() {
 
 	for (int k = 0; k < K; k++) {
 		spring();
-		//print();
-		summer();
 		//print();
 		fall();
 		//print();
