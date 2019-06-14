@@ -58,26 +58,45 @@ int init() {
 	return 0;
 }
 
-int order() {
+int Partition(int y, int x, int left, int right) {
+	int pivot = tree_map[y][x][left];
+	int low = left + 1;
+	int high = right;
 	int temp;
 
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < N; x++) {
-			changed[y][x] = 0;
-
-			for (int j = 0; j < tree_num[y][x] - 1; j++) {
-				for (int i = 0; i < tree_num[y][x] - 1; i++) {
-					if (tree_map[y][x][i] > tree_map[y][x][i + 1]) {
-						temp = tree_map[y][x][i];
-						tree_map[y][x][i] = tree_map[y][x][i + 1];
-						tree_map[y][x][i + 1] = temp;
-					}
-				}
-			}
-
+	while (low <= high) {
+		while ((pivot >= tree_map[y][x][low]) && (low <= right))	low++;
+		while ((pivot <= tree_map[y][x][high]) && (high >= left + 1))	high--;
+		if (low <= high) {
+			temp = tree_map[y][x][low];
+			tree_map[y][x][low] = tree_map[y][x][high];
+			tree_map[y][x][high] = temp;
 		}
 	}
+	temp = tree_map[y][x][left];
+	tree_map[y][x][left] = tree_map[y][x][high];
+	tree_map[y][x][high] = temp;
 
+	return high;
+
+}
+
+void QuickSort(int y, int x, int left, int right)
+{
+	if (left <= right)
+	{
+		int pivot = Partition(y, x, left, right);
+		QuickSort(y, x, left, pivot - 1);
+		QuickSort(y, x, pivot + 1, right);
+	}
+}
+
+int order() {
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			QuickSort(y, x, 0, tree_num[y][x] - 1);
+		}
+	}
 	return 0;
 }
 
@@ -102,6 +121,7 @@ int spring() {
 			}
 			tree_num[y][x] += num;
 			map[y][x] += dead;
+			map[y][x] += A[y][x]; // winter
 
 			changed[y][x] = 0; // clear
 		}
@@ -137,15 +157,6 @@ int fall() {
 	return 0;
 }
 
-int winter() {
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < N; x++) {
-			map[y][x] += A[y][x];
-		}
-	}
-	return 0;
-}
-
 int main() {
 	scanf("%d %d %d", &N, &M, &K);
 
@@ -168,8 +179,6 @@ int main() {
 		spring();
 		//print();
 		fall();
-		//print();
-		winter();
 		//print();
 	}
 
