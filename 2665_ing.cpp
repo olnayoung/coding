@@ -2,7 +2,7 @@
 
 int N, min;
 int map[50][50], dist[50][50], visit[50][50];
-int que[9999999][2];
+int que[99999][2];
 int start, finish;
 int dx[4] = { 0, 0, 1, -1 };
 int dy[4] = { 1, -1, 0, 0 };
@@ -22,16 +22,16 @@ int walls() {
 	dist[0][0] = 0;
 
 	int y, x, new_y, new_x;
-	while (start < finish) {
+	while (start == finish) {
 		y = que[start][0];	x = que[start][1];
-		start++;
+		start = (start++) % 99999;
 
 		for (int t = 0; t < 4; t++) {
 			new_y = y + dy[t];	new_x = x + dx[t];
 			
 			if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N)) {
 				que[finish][0] = new_y;	que[finish][1] = new_x;
-				finish++;
+				finish = (finish++) % 99999;
 
 				if (map[new_y][new_x] == 1) {
 					dist[new_y][new_x] = (dist[y][x] < dist[new_y][new_x]) ? dist[y][x] : dist[new_y][new_x];
