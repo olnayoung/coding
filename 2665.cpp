@@ -1,11 +1,23 @@
 #include <cstdio>
+#define max 9999999
 
 int N, min;
 int map[50][50], dist[50][50], visit[50][50];
-int que[99999][2];
+int que[max][2];
 int start, finish;
-int dx[4] = { 0, 0, 1, -1 };
-int dy[4] = { 1, -1, 0, 0 };
+int dx[4] = { 0, 1, 0, -1};
+int dy[4] = { 1, 0, -1, 0};
+
+int print() {
+	printf("\n"); printf("\n");
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			printf("%d ", dist[y][x]);
+		}
+		printf("\n");
+	}
+	return 0;
+}
 
 int clear() {
 	for (int y = 0; y < N; y++) {
@@ -22,16 +34,16 @@ int walls() {
 	dist[0][0] = 0;
 
 	int y, x, new_y, new_x;
-	while (start == finish) {
+	while (start != finish) {
 		y = que[start][0];	x = que[start][1];
-		start = (start++) % 99999;
+		start++;
 
 		for (int t = 0; t < 4; t++) {
 			new_y = y + dy[t];	new_x = x + dx[t];
-			
-			if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N)) {
+
+			if ((new_y > -1) && (new_y < N) && (new_x > -1) && (new_x < N) && (dist[y][x] < dist[new_y][new_x])) {
 				que[finish][0] = new_y;	que[finish][1] = new_x;
-				finish = (finish++) % 99999;
+				finish++;
 
 				if (map[new_y][new_x] == 1) {
 					dist[new_y][new_x] = (dist[y][x] < dist[new_y][new_x]) ? dist[y][x] : dist[new_y][new_x];
@@ -56,7 +68,8 @@ int main() {
 
 	clear();
 	walls();
-	printf("%d", dist[N-1][N-1]);
+	//print();
+	printf("%d", dist[N - 1][N - 1]);
 
 	return 0;
 }
