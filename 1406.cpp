@@ -1,17 +1,17 @@
 #include<iostream>
 #define len 600001
 
-int cur, num, N;
-char word[len], temp, save, save2, pos;
+int num_L, num_R, N;
+char word_L[len], word_R[len], temp;
 
 int main() {
 	while (1) {
 		scanf("%1c", &temp);
 
 		if (temp == '\n')	break;
-		word[num] = temp;	num++;
+		word_L[num_L] = temp;
+		num_L++;
 	}
-	cur = num;
 
 	scanf("%d", &N);
 
@@ -20,56 +20,29 @@ int main() {
 		scanf("%1c", &temp);
 
 		if (temp == 'L') {
-			while (1) {
-				if (cur == 0) break;
-				cur--;
-				if (word[cur] != 0) break;
-			}
+			if (num_L == 0)	continue;
+			word_R[num_R] = word_L[num_L - 1];
+			num_L--;	num_R++;
 		}
 		else if (temp == 'D') {
-			while (1) {
-				if (word[cur - 1] != 0) break;
-				cur++;
-				if (word[cur - 1] != 0) break;
-			}
+			if (num_R == 0) continue;
+			word_L[num_L] = word_R[num_R - 1];
+			num_L++;	num_R--;
 		}
 		else if (temp == 'B') {
-			if (cur == 0)	continue;
-			word[cur - 1] = 0;
-
-			while (1) {
-				if (cur == 0) break;
-				cur--;
-				if (word[cur - 1] != 0) break;
-			}
+			if (num_L == 0)	continue;
+			num_L--;
 		}
 		else {
 			getchar();
 			scanf("%1c", &temp);
-			num++;
-			pos = cur;
-			cur++;
-
-			while (1) {
-				if (word[pos] == 0) {
-					word[pos] = temp;
-					break;
-				}
-				else {
-					save = word[pos];
-					word[pos] = temp;
-					temp = word[pos + 1];
-					word[pos + 1] = save;
-					pos+=2;
-				}
-
-			}
+			word_L[num_L] = temp;
+			num_L++;
 		}
 	}
 
-	for (int t = 0; t < num; t++) {
-		if (word[t] != 0)	printf("%1c", word[t]);
-	}
+	for (int t = 0; t < num_L; t++) printf("%1c", word_L[t]);
+	for (int t = num_R - 1; t > -1; t--) printf("%1c", word_R[t]);
 
 	return 0;
 }
