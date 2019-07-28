@@ -5,6 +5,7 @@ int A, B;
 int prime[len];
 
 int find_prime() {
+	prime[1] = 1;
 	for (int y = 2; y <= B; y++) {
 		if (prime[y] == 0){
 			for (int x = 2 * y; x <= B; x += y) {
