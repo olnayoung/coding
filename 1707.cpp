@@ -20,10 +20,11 @@ int BFS(int n) {
 			if (visit[graph[a][t]] == 0) {
 				if (color[graph[a][t]] == color[a])	return 1;
 				else {
-					que.push(graph[a][t]);
 
-					if (color[a] == 1)	color[graph[a][t]] = 2;
-					else color[graph[a][t]] = 1;
+					color[graph[a][t]] = 3 - color[a];
+					if (visit[graph[a][t]] == 0) {
+						que.push(graph[a][t]);
+					}
 				}
 			}
 		}
@@ -63,6 +64,8 @@ int main() {
 			color[v] = 0;
 			visit[v] = 0;
 		}
+
+		while (!que.empty()) que.pop();
 
 	}
 
