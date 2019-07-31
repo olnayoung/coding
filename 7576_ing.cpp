@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #define len 1002
+#define big 1000000
 
 using namespace std;
 
@@ -39,21 +40,20 @@ int main() {
 				que_y.push(y);	que_x.push(x);
 				visit[y][x] = 0;
 			}
-			else	visit[y][x] = len*100;
+			else	visit[y][x] = big;
 		}
 	}
 
 	BFS();
 
-	ans = 0;
 	for (int h = 0; h < H; h++) {
 		for (int w = 0; w < W; w++) {
-			if ((visit[h][w] == (len * 100)) && (map[h][w] == -1)) continue;
+			if ((visit[h][w] == big) && (map[h][w] == -1)) continue;
 			ans = (ans > visit[h][w]) ? ans : visit[h][w];
 		}
 	}
 
-	if (ans == (len * 100))	ans = -1;
+	if (ans == big)	ans = -1;
 
 	printf("%d", ans);
 
