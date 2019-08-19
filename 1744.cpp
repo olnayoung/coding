@@ -1,7 +1,7 @@
 #include <iostream>
 #define len 10001
 
-int N, sr[len], sr2[len], save;
+int N, sr[len], sr2[len];
 long long ans;
 
 int merge(int left, int mid, int right) {
@@ -9,7 +9,7 @@ int merge(int left, int mid, int right) {
 	i = left; j = mid + 1; k = left;
 
 	while ((i <= mid) && (j <= right)) {
-		if (sr[i] <= sr[j]) {
+		if (sr[i] >= sr[j]) {
 			sr2[k++] = sr[j++];
 		}
 		else {
@@ -24,7 +24,7 @@ int merge(int left, int mid, int right) {
 	}
 	else {
 		for (int t = i; t <= mid; t++) {
-			sr2[k] = sr[t];
+			sr2[k++] = sr[t];
 		}
 	}
 
@@ -56,27 +56,29 @@ int main() {
 
 	MergeSort(0, N - 1);
 
-	for (int n = 0; n < N; n++) {
-		if (sr[n] <= 0)	break;
-		else if (sr[n + 1] <= 0) {
-			ans += sr[n];
-			save = n;
-			break;
-		}
-		ans += (sr[n] * sr[n + 1]);
-		n++;
-		save = n;
-	}
+	int left = 0;
+	int right = N - 1;
 
-	if (sr[0] <= 0)	save = -1;
-	for (int n = N - 1; n > save; n--) {
-		if (n - 1 > save) {
-			ans += (sr[n] * sr[n - 1]);
+	for (; left < right; left += 2) {
+		if (sr[left] < 1 && sr[left + 1] < 1) {
+			ans += sr[left] * sr[left + 1];
 		}
 		else {
-			ans += sr[n];
+			break;
 		}
-		n--;
+	}
+
+	for (; right > 0; right -= 2) {
+		if (sr[right] > 1 && sr[right - 1] > 1) {
+			ans += sr[right] * sr[right - 1];
+		}
+		else {
+			break;
+		}
+	}
+
+	for (; right >= left; right--) {
+		ans += sr[right];
 	}
 
 	printf("%lld", ans);
