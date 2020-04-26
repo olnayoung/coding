@@ -1,0 +1,9 @@
+def solution(A):
+    check = [0 for x in range(len(A)+2)]
+    
+    for n in range(len(A)):
+        check[A[n]] = 1
+        
+    for n in range(1, len(check)):
+        if check[n] == 0:
+            return n
